@@ -69,22 +69,24 @@ public class Lector {
     public void iniciar() throws FileNotFoundException, IOException {
 
         File file = new File(this.ruta_file);
+        System.out.println("Ya se creo el archivo: "+ file);
         fr = new FileReader(file);
         br = new BufferedReader(fr);
         String line;
         String msj = "";
+        System.out.println("Va a entrar a leer el archivo");
         while ((line = br.readLine()) != null) {
             Item item = leerItem(line);
 
             if (item != null) {
                 if (itemExist(item.getId_item())) {
                     ActulizarBD(item);
-                    msj = "Actulizando ";
+//                    msj = "Actulizando ";
                 } else {
                     insertarBD(item);
-                    msj = "Insertando ";
+//                    msj = "Insertando ";
                 }
-                System.out.println(msj + " item id: " + item.getId_item());
+//                System.out.println(msj + " item id: " + item.getId_item());
             }
 
         }
@@ -105,8 +107,14 @@ public class Lector {
     public Item leerItem(String line_text) {
         Item item = null;
         //primero se evalia que tipo de linea si tieme datos de item
-        if (line_text.equals("") || (line_text.contains("|")) || (line_text.indexOf("+") < 2) || (line_text.contains(""))) {
+        if (line_text.equals("") || (line_text.contains("|")) || line_text.contains("FIN LISTADO")) {
             return item; //aqui sera null
+        }
+        if((line_text.indexOf("+") > -1) && (line_text.indexOf("+") < 2)){
+            return item;
+        }
+        if(line_text.substring(0, 6).trim().equals("")){
+            return item;
         }
 
         /*public Item(int id_item, String descripcion, String referencia, 
@@ -185,8 +193,8 @@ public class Lector {
         String organizado = "";
         if (convertir.contains(",")) {
             organizado = convertir.replace(",", "");
-        } else {
-            organizado = convertir.replace(".", ",");
+        } else{
+            organizado = convertir;
         }
         return organizado;
     }
