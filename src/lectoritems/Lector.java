@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.RollbackException;
 import lectoritems.DAO.ItemJpaController;
 
 /**
@@ -207,7 +208,11 @@ public class Lector {
     public void insertarBD(Item item) {
         try {
             itemJpa.create(item);
-        } catch (Exception ex) {
+        } catch (RollbackException ex) {
+            System.out.println("Valor de referencia: --"+ item.toString()+"--");
+            ex.printStackTrace();
+            
+        }catch (Exception ex) {
             ex.printStackTrace();
         }
     }

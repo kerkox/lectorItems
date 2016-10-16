@@ -15,7 +15,7 @@ public class Item implements Serializable{
     int id_item;
     @Column (length = 80,nullable = false) 
     String descripcion;
-    @Column (length = 10,nullable = false)
+    @Column (length = 15,nullable = false)
     String referencia;
     @Column (length = 5,nullable = false)
     String uni_inv;
@@ -304,15 +304,38 @@ public class Item implements Serializable{
     public void setCosto_estandar(float costo_estandar) {
         this.costo_estandar = costo_estandar;
     }
-    
-    
-    
-    
-    
-    
 
-            
-    
+    @Override
+    public String toString() {
+        return "\nId_item ="+this.id_item +
+                "\n descripcion ="+ this.descripcion+
+                "\n referencia ="+this.referencia+
+                "\n INV ="+ this.uni_inv+
+                "\n INVENT_UM ="+this.INVENT_UM+
+                "\n INVENT_FACTOR ="+this.INVENT_FACTOR+
+        "\n EMPAQUE_UM ="+this.EMPAQUE_UM+
+        "\n EMPAQUE_FACTOR ="+this.EMPAQUE_FACTOR+
+        "\n ORDEN_UM ="+this.ORDEN_UM+
+        "\n ORDEN_FACTOR ="+this.ORDEN_FACTOR+
+        "\n peso ="+this.peso+
+        "\n VOLUMEN_KLS ="+this.VOLUMEN_KLS+
+        "\n grupo ="+this.grupo+
+        "\n linea ="+this.linea+
+        "\n CRITERIO_1 = "+this.CRITERIO_1+
+        "\n CRITERIO_2 ="+this.CRITERIO_2+
+        "\n CRITERIO_3 ="+this.CRITERIO_3+
+        "\n CRITERIO_4 ="+this.CRITERIO_4+
+        "\n impuesto ="+this.impuesto+
+        "\n GEN ="+this.GEN+
+        "\n PROCED = "+this.PROCED+
+        "\n EXT ="+this.EXT+
+        "\n TALLA ="+this.TALLA+
+        "\n LOTE ="+this.LOTE+
+        "\n SERIAL ="+this.SERIAL+
+        "\n costo_estandar = "+ this.costo_estandar;
+    }
+
+
     
     
 }

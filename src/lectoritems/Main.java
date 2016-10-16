@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            Lector lector = new Lector("ITEMS2.txt");
+            Lector lector = new Lector("ITEMS.txt");
             Date inicio = new Date();
             lector.iniciar();
             Date fin = new Date();
