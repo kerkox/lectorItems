@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
@@ -17,6 +19,19 @@ import lectoritems.DAO.ItemJpaController;
  * @author Paulker
  */
 public class Lector {
+
+    public static Logger LOGGER = null;
+
+    static {
+        try {
+            Handler handler = new FileHandler("paul.log");
+            LOGGER.addHandler(handler);
+        } catch (IOException ex) {
+            Logger.getLogger(Lector.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(Lector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     int time_seg;  //tiempo de actulizacion por defecto 
     String ruta_file; //la ruta donde estara el archivo para actulizar la BD
@@ -70,13 +85,25 @@ public class Lector {
     public void iniciar() throws FileNotFoundException, IOException {
 
         File file = new File(this.ruta_file);
-        System.out.println("Ya se creo el archivo: "+ file);
+        System.out.println("Ya se creo el archivo: " + file);
         fr = new FileReader(file);
         br = new BufferedReader(fr);
         String line;
         String msj = "";
         System.out.println("Va a entrar a leer el archivo");
         while ((line = br.readLine()) != null) {
+            //primero se evalia que tipo de linea si tieme datos de item
+            if (line.equals("") || (line.contains("|")) || line.contains("FIN LISTADO")) {
+                continue;
+            }
+            int index = line.indexOf("+--");
+            if ((index > -1) && (index < 2)) {
+                continue;
+            }
+            if (line.substring(0, 6).trim().equals("")) {
+                continue;
+            }
+
             Item item = leerItem(line);
 
             if (item != null) {
@@ -107,16 +134,17 @@ public class Lector {
      */
     public Item leerItem(String line_text) {
         Item item = null;
-        //primero se evalia que tipo de linea si tieme datos de item
-        if (line_text.equals("") || (line_text.contains("|")) || line_text.contains("FIN LISTADO")) {
-            return item; //aqui sera null
-        }
-        if((line_text.indexOf("+") > -1) && (line_text.indexOf("+") < 2)){
-            return item;
-        }
-        if(line_text.substring(0, 6).trim().equals("")){
-            return item;
-        }
+//        //primero se evalia que tipo de linea si tieme datos de item
+//        if (line_text.equals("") || (line_text.contains("|")) || line_text.contains("FIN LISTADO")) {
+//            return null; //aqui sera null
+//        }
+//        int index = line_text.indexOf("+--");
+//        if((index > -1) && (index < 2)){
+//            return null;
+//        }
+//        if(line_text.substring(0, 6).trim().equals("")){
+//            return null;
+//        }
 
         /*public Item(int id_item, String descripcion, String referencia, 
         String uni_inv, String INVENT_UM, float INVENT_FACTOR, 
@@ -138,13 +166,19 @@ public class Lector {
         String descripcion = line_text.substring(6, 52).trim();
         String referencia = line_text.substring(52, 68).trim();
         String INV = line_text.substring(68, 71).trim();
-        if (!line_text.substring(71, 75).trim().equals("")) {
-            INVENT_UM = line_text.substring(71, 75).trim();
+
+        INVENT_UM = line_text.substring(71, 75).trim();
+        if (INVENT_UM.equals("")) {
+            INVENT_UM = null;
         }
+
         float INVENT_FACTOR = Float.parseFloat(line_text.substring(75, 85).trim());
-        if (!line_text.substring(85, 89).trim().equals("")) {
-            EMPAQUE_UM = line_text.substring(85, 89).trim();
+
+        EMPAQUE_UM = line_text.substring(85, 89).trim();
+        if (EMPAQUE_UM.equals("")) {
+            EMPAQUE_UM = null;
         }
+
         float EMPAQUE_FACTOR = Float.parseFloat(line_text.substring(89, 99).trim());
         if (!line_text.substring(99, 103).trim().equals("")) {
             ORDEN_UM = line_text.substring(99, 103).trim();
@@ -176,8 +210,6 @@ public class Lector {
         String costo = invertir_puntos_comas(line_text.substring(210, 224).trim());
         float costo_estandar = Float.parseFloat(costo);
 
-        
-
         item = new Item(Id_item, descripcion, referencia, INV, INVENT_UM, INVENT_FACTOR, EMPAQUE_UM, EMPAQUE_FACTOR, ORDEN_UM, ORDEN_FACTOR, peso, VOLUMEN_KLS, grupo, linea, CRITERIO_1, CRITERIO_2, CRITERIO_3, CRITERIO_4, impuesto, GEN, PROCED, EXT, TALLA, LOTE, SERIAL, costo_estandar);
 
         return item;
@@ -191,12 +223,13 @@ public class Lector {
      * @return 1000,00
      */
     public static String invertir_puntos_comas(String convertir) {
-        String organizado = "";
+        String organizado = convertir;
         if (convertir.contains(",")) {
             organizado = convertir.replace(",", "");
-        } else{
-            organizado = convertir;
         }
+//        } else {
+//            organizado = convertir;
+//        }
         return organizado;
     }
 
@@ -209,10 +242,10 @@ public class Lector {
         try {
             itemJpa.create(item);
         } catch (RollbackException ex) {
-            System.out.println("Valor de referencia: --"+ item.toString()+"--");
+            System.out.println("Valor de referencia: --" + item.toString() + "--");
             ex.printStackTrace();
-            
-        }catch (Exception ex) {
+
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
