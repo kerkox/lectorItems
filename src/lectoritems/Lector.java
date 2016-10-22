@@ -22,9 +22,10 @@ public class Lector {
 
     public static Logger LOGGER = null;
 
-    static {
+    public void logger(){
         try {
             Handler handler = new FileHandler("paul.log");
+            LOGGER = Logger.getLogger("paul.log");
             LOGGER.addHandler(handler);
         } catch (IOException ex) {
             Logger.getLogger(Lector.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,12 +50,14 @@ public class Lector {
     public Lector(String ruta_file) {
         this.ruta_file = ruta_file;
         this.time_seg = 300; //VALOR POR DEFECTO
+        logger();
         loadPersistence();
     }
 
     public Lector(int time_seg, String ruta_file) {
         this.time_seg = time_seg;
         this.ruta_file = ruta_file;
+        logger();
         loadPersistence();
     }
 
@@ -97,7 +100,7 @@ public class Lector {
                 continue;
             }
             int index = line.indexOf("+--");
-            if ((index > -1) && (index < 2)) {
+            if (index > -1) {
                 continue;
             }
             if (line.substring(0, 6).trim().equals("")) {
@@ -180,25 +183,30 @@ public class Lector {
         }
 
         float EMPAQUE_FACTOR = Float.parseFloat(line_text.substring(89, 99).trim());
-        if (!line_text.substring(99, 103).trim().equals("")) {
-            ORDEN_UM = line_text.substring(99, 103).trim();
+        ORDEN_UM = line_text.substring(99, 103).trim();
+        if (ORDEN_UM.equals("")) {
+            ORDEN_UM = null;
         }
         float ORDEN_FACTOR = Float.parseFloat(line_text.substring(103, 113).trim());
         float peso = Float.parseFloat(line_text.substring(113, 125).trim());
         float VOLUMEN_KLS = Float.parseFloat(line_text.substring(125, 137).trim());
         int grupo = Integer.parseInt(line_text.substring(137, 142).trim());
         int linea = Integer.parseInt(line_text.substring(142, 149).trim());
-        if (!line_text.substring(149, 155).trim().equals("")) {
-            CRITERIO_1 = line_text.substring(149, 155).trim();
+        CRITERIO_1 = line_text.substring(149, 155).trim();
+        if (CRITERIO_1.equals("")) {
+            CRITERIO_1 = null;
         }
-        if (!line_text.substring(155, 161).trim().equals("")) {
-            CRITERIO_2 = line_text.substring(155, 161).trim();
+        CRITERIO_2 = line_text.substring(155, 161).trim();
+        if (CRITERIO_2.equals("")) {
+            CRITERIO_2 = null;
         }
-        if (!line_text.substring(161, 167).trim().equals("")) {
-            CRITERIO_3 = line_text.substring(161, 167).trim();
+        CRITERIO_3 = line_text.substring(161, 167).trim();
+        if (CRITERIO_3.equals("")) {
+            CRITERIO_3 = null;
         }
-        if (!line_text.substring(167, 173).trim().equals("")) {
-            CRITERIO_4 = line_text.substring(167, 173).trim();
+        CRITERIO_4 = line_text.substring(167, 173).trim();
+        if (CRITERIO_4.equals("")) {
+            CRITERIO_4 = null;
         }
         String impuesto = line_text.substring(173, 182).trim();
         String GEN = line_text.substring(182, 187).trim();
